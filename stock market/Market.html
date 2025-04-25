@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top 100 Cryptocurrencies</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #222;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Top 100 Cryptocurrencies (Live)</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Symbol</th>
+        <th>Price (USD)</th>
+        <th>24h Change (%)</th>
+      </tr>
+    </thead>
+    <tbody id="crypto-table-body">
+      <!-- Live data goes here -->
+    </tbody>
+  </table>
+
+  <script>
+    async function fetchCryptoData() {
+      try {
+        const response = await fetch("https://api.coinpaprika.com/v1/tickers");
+        const data = await response.json();
+        const top100 = data.slice(0, 100);
+        const tableBody = document.getElementById("crypto-table-body");
+        tableBody.innerHTML = "";
+
+        top100.forEach((coin, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${coin.name}</td>
+            <td>${coin.symbol}</td>
+            <td>$${coin.quotes.USD.price.toFixed(2)}</td>
+            <td style="color: ${coin.quotes.USD.percent_change_24h >= 0 ? 'green' : 'red'};">
+              ${coin.quotes.USD.percent_change_24h.toFixed(2)}%
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      } catch (err) {
+        console.error("Failed to fetch data from CoinPaprika:", err);
+      }
+    }
+
+    // Load data on page load
+    window.onload = fetchCryptoData;
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top Stocks (Live)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #222;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Top Stocks (Live)</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Symbol</th>
+        <th>Price (USD)</th>
+        <th>Change (%)</th>
+      </tr>
+    </thead>
+    <tbody id="stock-table-body">
+      <!-- Live data goes here -->
+    </tbody>
+  </table>
+
+  <script>
+    async function fetchStockData() {
+      try {
+        const response = await fetch(
+          "https://financialmodelingprep.com/api/v3/quote/AAPL,MSFT,GOOGL,AMZN,NFLX,TSLA,META,NVDA,INTC,ADBE?apikey=demo"
+        );
+        const data = await response.json();
+        const tableBody = document.getElementById("stock-table-body");
+        tableBody.innerHTML = "";
+
+        data.forEach((stock, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${stock.name}</td>
+            <td>${stock.symbol}</td>
+            <td>$${stock.price.toFixed(2)}</td>
+            <td style="color: ${stock.changesPercentage >= 0 ? 'green' : 'red'};">
+              ${stock.changesPercentage.toFixed(2)}%
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      } catch (err) {
+        console.error("Failed to fetch stock data:", err);
+      }
+    }
+
+    window.onload = fetchStockData;
+  </script>
+
+</body>
+</html>
